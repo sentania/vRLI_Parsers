@@ -1,0 +1,15 @@
+[filelog|custom_log]
+directory=/var/log
+include=panera.log
+parser=custom_log_parser
+
+[parser|custom_log_parser]
+base_parser=clf
+format=%{%Y-%m-%d %H:%M:%S%f}t %{appID}i %{appVersion}i %{severity}i %{module}i [file=%{function}i:%{lineNumber}i] %M
+exclude_fields=log_message
+field_decoder={"log_message":{"function":{"inject_order.py":"custom_log_parser_inject_order"}}}
+
+[parser|custom_log_parser_inject_order]
+base_parser=clf
+exclude_fields=log_message
+format=- %{event}i: {%{payload}i}
